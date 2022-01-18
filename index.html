@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/nwi_minusU_0.js"></script>
+        <script src="data/Lulc_CedarCreek_boundary_1.js"></script>
+        <script src="data/Mnnativeplantcommunities_CCNHA_2.js"></script>
+        <script src="data/Soil_Types_lyr_3.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[45.39203985704399,-93.23983608409952],[45.41785526388606,-93.17470881890581]]);
+        var hash = new L.Hash(map);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.',
+        }).addTo(map);
+
+        // https://leafletjs.com/examples/map-panes/
+        map.createPane('obs');
+        map.getPane('obs').style.zIndex = 650;
+
+
+        L.tileLayer('https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?project_id=biodiversity-of-cedar-creek', {
+            attribution: '',
+            pane: 'obs'
+        }).addTo(map);
+
+
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_nwi_minusU_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">AREA</th>\
+                        <td>' + (feature.properties['AREA'] !== null ? autolinker.link(feature.properties['AREA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PERIMETER</th>\
+                        <td>' + (feature.properties['PERIMETER'] !== null ? autolinker.link(feature.properties['PERIMETER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">WETL_NWI_</th>\
+                        <td>' + (feature.properties['WETL_NWI_'] !== null ? autolinker.link(feature.properties['WETL_NWI_'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">WETL_NWI_I</th>\
+                        <td>' + (feature.properties['WETL_NWI_I'] !== null ? autolinker.link(feature.properties['WETL_NWI_I'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NWI_CODE</th>\
+                        <td>' + (feature.properties['NWI_CODE'] !== null ? autolinker.link(feature.properties['NWI_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NEW_COW</th>\
+                        <td>' + (feature.properties['NEW_COW'] !== null ? autolinker.link(feature.properties['NEW_COW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SYSTEM</th>\
+                        <td>' + (feature.properties['SYSTEM'] !== null ? autolinker.link(feature.properties['SYSTEM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUBSYSTEM</th>\
+                        <td>' + (feature.properties['SUBSYSTEM'] !== null ? autolinker.link(feature.properties['SUBSYSTEM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASS1</th>\
+                        <td>' + (feature.properties['CLASS1'] !== null ? autolinker.link(feature.properties['CLASS1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUBCLASS1</th>\
+                        <td>' + (feature.properties['SUBCLASS1'] !== null ? autolinker.link(feature.properties['SUBCLASS1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASS2</th>\
+                        <td>' + (feature.properties['CLASS2'] !== null ? autolinker.link(feature.properties['CLASS2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUBCLASS2</th>\
+                        <td>' + (feature.properties['SUBCLASS2'] !== null ? autolinker.link(feature.properties['SUBCLASS2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">WREG</th>\
+                        <td>' + (feature.properties['WREG'] !== null ? autolinker.link(feature.properties['WREG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOILM</th>\
+                        <td>' + (feature.properties['SOILM'] !== null ? autolinker.link(feature.properties['SOILM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SPEC_MOD1</th>\
+                        <td>' + (feature.properties['SPEC_MOD1'] !== null ? autolinker.link(feature.properties['SPEC_MOD1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SPEC_MOD2</th>\
+                        <td>' + (feature.properties['SPEC_MOD2'] !== null ? autolinker.link(feature.properties['SPEC_MOD2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CIRC39</th>\
+                        <td>' + (feature.properties['CIRC39'] !== null ? autolinker.link(feature.properties['CIRC39'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">OLD_COW</th>\
+                        <td>' + (feature.properties['OLD_COW'] !== null ? autolinker.link(feature.properties['OLD_COW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MNWET</th>\
+                        <td>' + (feature.properties['MNWET'] !== null ? autolinker.link(feature.properties['MNWET'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_nwi_minusU_0_0() {
+            return {
+                pane: 'pane_nwi_minusU_0',
+                opacity: 0.75,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                fillColor: 'rgba(190,207,80,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_nwi_minusU_0');
+        map.getPane('pane_nwi_minusU_0').style.zIndex = 400;
+        map.getPane('pane_nwi_minusU_0').style['mix-blend-mode'] = 'normal';
+        var layer_nwi_minusU_0 = new L.geoJson(json_nwi_minusU_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_nwi_minusU_0',
+            layerName: 'layer_nwi_minusU_0',
+            pane: 'pane_nwi_minusU_0',
+            onEachFeature: pop_nwi_minusU_0,
+            style: style_nwi_minusU_0_0,
+        });
+        bounds_group.addLayer(layer_nwi_minusU_0);
+        map.addLayer(layer_nwi_minusU_0);
+        function pop_Lulc_CedarCreek_boundary_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">C_NUM</th>\
+                        <td>' + (feature.properties['C_NUM'] !== null ? autolinker.link(feature.properties['C_NUM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">C_ALPHA</th>\
+                        <td>' + (feature.properties['C_ALPHA'] !== null ? autolinker.link(feature.properties['C_ALPHA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">C_TEXT</th>\
+                        <td>' + (feature.properties['C_TEXT'] !== null ? autolinker.link(feature.properties['C_TEXT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FLD_CODE</th>\
+                        <td>' + (feature.properties['FLD_CODE'] !== null ? autolinker.link(feature.properties['FLD_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FLD_DATE</th>\
+                        <td>' + (feature.properties['FLD_DATE'] !== null ? autolinker.link(feature.properties['FLD_DATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FLD_LEVEL</th>\
+                        <td>' + (feature.properties['FLD_LEVEL'] !== null ? autolinker.link(feature.properties['FLD_LEVEL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">IMG_CODE</th>\
+                        <td>' + (feature.properties['IMG_CODE'] !== null ? autolinker.link(feature.properties['IMG_CODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">IMG_TYPE</th>\
+                        <td>' + (feature.properties['IMG_TYPE'] !== null ? autolinker.link(feature.properties['IMG_TYPE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_0XX</th>\
+                        <td>' + (feature.properties['M_0XX'] !== null ? autolinker.link(feature.properties['M_0XX'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_2XX</th>\
+                        <td>' + (feature.properties['M_2XX'] !== null ? autolinker.link(feature.properties['M_2XX'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_30X</th>\
+                        <td>' + (feature.properties['M_30X'] !== null ? autolinker.link(feature.properties['M_30X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_31X</th>\
+                        <td>' + (feature.properties['M_31X'] !== null ? autolinker.link(feature.properties['M_31X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_32X</th>\
+                        <td>' + (feature.properties['M_32X'] !== null ? autolinker.link(feature.properties['M_32X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_33X</th>\
+                        <td>' + (feature.properties['M_33X'] !== null ? autolinker.link(feature.properties['M_33X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_34X</th>\
+                        <td>' + (feature.properties['M_34X'] !== null ? autolinker.link(feature.properties['M_34X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_400</th>\
+                        <td>' + (feature.properties['M_400'] !== null ? autolinker.link(feature.properties['M_400'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_401</th>\
+                        <td>' + (feature.properties['M_401'] !== null ? autolinker.link(feature.properties['M_401'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_402</th>\
+                        <td>' + (feature.properties['M_402'] !== null ? autolinker.link(feature.properties['M_402'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_403</th>\
+                        <td>' + (feature.properties['M_403'] !== null ? autolinker.link(feature.properties['M_403'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_404</th>\
+                        <td>' + (feature.properties['M_404'] !== null ? autolinker.link(feature.properties['M_404'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_405</th>\
+                        <td>' + (feature.properties['M_405'] !== null ? autolinker.link(feature.properties['M_405'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_406</th>\
+                        <td>' + (feature.properties['M_406'] !== null ? autolinker.link(feature.properties['M_406'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_407</th>\
+                        <td>' + (feature.properties['M_407'] !== null ? autolinker.link(feature.properties['M_407'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_408</th>\
+                        <td>' + (feature.properties['M_408'] !== null ? autolinker.link(feature.properties['M_408'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_409</th>\
+                        <td>' + (feature.properties['M_409'] !== null ? autolinker.link(feature.properties['M_409'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_410</th>\
+                        <td>' + (feature.properties['M_410'] !== null ? autolinker.link(feature.properties['M_410'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_411</th>\
+                        <td>' + (feature.properties['M_411'] !== null ? autolinker.link(feature.properties['M_411'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_412</th>\
+                        <td>' + (feature.properties['M_412'] !== null ? autolinker.link(feature.properties['M_412'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_413</th>\
+                        <td>' + (feature.properties['M_413'] !== null ? autolinker.link(feature.properties['M_413'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_414</th>\
+                        <td>' + (feature.properties['M_414'] !== null ? autolinker.link(feature.properties['M_414'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_415</th>\
+                        <td>' + (feature.properties['M_415'] !== null ? autolinker.link(feature.properties['M_415'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_416</th>\
+                        <td>' + (feature.properties['M_416'] !== null ? autolinker.link(feature.properties['M_416'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_417</th>\
+                        <td>' + (feature.properties['M_417'] !== null ? autolinker.link(feature.properties['M_417'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_418</th>\
+                        <td>' + (feature.properties['M_418'] !== null ? autolinker.link(feature.properties['M_418'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_419</th>\
+                        <td>' + (feature.properties['M_419'] !== null ? autolinker.link(feature.properties['M_419'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_420</th>\
+                        <td>' + (feature.properties['M_420'] !== null ? autolinker.link(feature.properties['M_420'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_421</th>\
+                        <td>' + (feature.properties['M_421'] !== null ? autolinker.link(feature.properties['M_421'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_422</th>\
+                        <td>' + (feature.properties['M_422'] !== null ? autolinker.link(feature.properties['M_422'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_499</th>\
+                        <td>' + (feature.properties['M_499'] !== null ? autolinker.link(feature.properties['M_499'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_5XX</th>\
+                        <td>' + (feature.properties['M_5XX'] !== null ? autolinker.link(feature.properties['M_5XX'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_60X</th>\
+                        <td>' + (feature.properties['M_60X'] !== null ? autolinker.link(feature.properties['M_60X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_61X</th>\
+                        <td>' + (feature.properties['M_61X'] !== null ? autolinker.link(feature.properties['M_61X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_62X</th>\
+                        <td>' + (feature.properties['M_62X'] !== null ? autolinker.link(feature.properties['M_62X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_71X</th>\
+                        <td>' + (feature.properties['M_71X'] !== null ? autolinker.link(feature.properties['M_71X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_72X</th>\
+                        <td>' + (feature.properties['M_72X'] !== null ? autolinker.link(feature.properties['M_72X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_73X</th>\
+                        <td>' + (feature.properties['M_73X'] !== null ? autolinker.link(feature.properties['M_73X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_74X</th>\
+                        <td>' + (feature.properties['M_74X'] !== null ? autolinker.link(feature.properties['M_74X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_75X</th>\
+                        <td>' + (feature.properties['M_75X'] !== null ? autolinker.link(feature.properties['M_75X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOTES</th>\
+                        <td>' + (feature.properties['NOTES'] !== null ? autolinker.link(feature.properties['NOTES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOURCE</th>\
+                        <td>' + (feature.properties['SOURCE'] !== null ? autolinker.link(feature.properties['SOURCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ACRES</th>\
+                        <td>' + (feature.properties['ACRES'] !== null ? autolinker.link(feature.properties['ACRES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">M_423</th>\
+                        <td>' + (feature.properties['M_423'] !== null ? autolinker.link(feature.properties['M_423'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CARTO</th>\
+                        <td>' + (feature.properties['CARTO'] !== null ? autolinker.link(feature.properties['CARTO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">UNIQUE_ID</th>\
+                        <td>' + (feature.properties['UNIQUE_ID'] !== null ? autolinker.link(feature.properties['UNIQUE_ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SHAPE_Leng</th>\
+                        <td>' + (feature.properties['SHAPE_Leng'] !== null ? autolinker.link(feature.properties['SHAPE_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SHAPE_Area</th>\
+                        <td>' + (feature.properties['SHAPE_Area'] !== null ? autolinker.link(feature.properties['SHAPE_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Lulc_CedarCreek_boundary_1_0() {
+            return {
+                pane: 'pane_Lulc_CedarCreek_boundary_1',
+                opacity: 0.75,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                fillColor: 'rgba(231,113,72,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Lulc_CedarCreek_boundary_1');
+        map.getPane('pane_Lulc_CedarCreek_boundary_1').style.zIndex = 401;
+        map.getPane('pane_Lulc_CedarCreek_boundary_1').style['mix-blend-mode'] = 'normal';
+        var layer_Lulc_CedarCreek_boundary_1 = new L.geoJson(json_Lulc_CedarCreek_boundary_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Lulc_CedarCreek_boundary_1',
+            layerName: 'layer_Lulc_CedarCreek_boundary_1',
+            pane: 'pane_Lulc_CedarCreek_boundary_1',
+            onEachFeature: pop_Lulc_CedarCreek_boundary_1,
+            style: style_Lulc_CedarCreek_boundary_1_0,
+        });
+        bounds_group.addLayer(layer_Lulc_CedarCreek_boundary_1);
+        map.addLayer(layer_Lulc_CedarCreek_boundary_1);
+        function pop_Mnnativeplantcommunities_CCNHA_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td>' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COUNTY</th>\
+                        <td>' + (feature.properties['COUNTY'] !== null ? autolinker.link(feature.properties['COUNTY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SITE</th>\
+                        <td>' + (feature.properties['SITE'] !== null ? autolinker.link(feature.properties['SITE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NCCODE</th>\
+                        <td>' + (feature.properties['NCCODE'] !== null ? autolinker.link(feature.properties['NCCODE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMPLEX1</th>\
+                        <td>' + (feature.properties['COMPLEX1'] !== null ? autolinker.link(feature.properties['COMPLEX1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SYSTEM</th>\
+                        <td>' + (feature.properties['SYSTEM'] !== null ? autolinker.link(feature.properties['SYSTEM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">FLOR_REG</th>\
+                        <td>' + (feature.properties['FLOR_REG'] !== null ? autolinker.link(feature.properties['FLOR_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASS</th>\
+                        <td>' + (feature.properties['CLASS'] !== null ? autolinker.link(feature.properties['CLASS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TYPE</th>\
+                        <td>' + (feature.properties['TYPE'] !== null ? autolinker.link(feature.properties['TYPE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SUBTYPE</th>\
+                        <td>' + (feature.properties['SUBTYPE'] !== null ? autolinker.link(feature.properties['SUBTYPE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NCCODE2</th>\
+                        <td>' + (feature.properties['NCCODE2'] !== null ? autolinker.link(feature.properties['NCCODE2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">COMPLEX2</th>\
+                        <td>' + (feature.properties['COMPLEX2'] !== null ? autolinker.link(feature.properties['COMPLEX2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NPC</th>\
+                        <td>' + (feature.properties['NPC'] !== null ? autolinker.link(feature.properties['NPC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ENAME</th>\
+                        <td>' + (feature.properties['ENAME'] !== null ? autolinker.link(feature.properties['ENAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LABEL</th>\
+                        <td>' + (feature.properties['LABEL'] !== null ? autolinker.link(feature.properties['LABEL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">STATUS</th>\
+                        <td>' + (feature.properties['STATUS'] !== null ? autolinker.link(feature.properties['STATUS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Mcbsnpcid</th>\
+                        <td>' + (feature.properties['Mcbsnpcid'] !== null ? autolinker.link(feature.properties['Mcbsnpcid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">op_date</th>\
+                        <td>' + (feature.properties['op_date'] !== null ? autolinker.link(feature.properties['op_date'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lu_date</th>\
+                        <td>' + (feature.properties['lu_date'] !== null ? autolinker.link(feature.properties['lu_date'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">sjoin</th>\
+                        <td>' + (feature.properties['sjoin'] !== null ? autolinker.link(feature.properties['sjoin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SHAPE_Leng</th>\
+                        <td>' + (feature.properties['SHAPE_Leng'] !== null ? autolinker.link(feature.properties['SHAPE_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SHAPE_Area</th>\
+                        <td>' + (feature.properties['SHAPE_Area'] !== null ? autolinker.link(feature.properties['SHAPE_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Mnnativeplantcommunities_CCNHA_2_0() {
+            return {
+                pane: 'pane_Mnnativeplantcommunities_CCNHA_2',
+                opacity: 0.75,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                fillColor: 'rgba(255,158,23,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Mnnativeplantcommunities_CCNHA_2');
+        map.getPane('pane_Mnnativeplantcommunities_CCNHA_2').style.zIndex = 402;
+        map.getPane('pane_Mnnativeplantcommunities_CCNHA_2').style['mix-blend-mode'] = 'normal';
+        var layer_Mnnativeplantcommunities_CCNHA_2 = new L.geoJson(json_Mnnativeplantcommunities_CCNHA_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Mnnativeplantcommunities_CCNHA_2',
+            layerName: 'layer_Mnnativeplantcommunities_CCNHA_2',
+            pane: 'pane_Mnnativeplantcommunities_CCNHA_2',
+            onEachFeature: pop_Mnnativeplantcommunities_CCNHA_2,
+            style: style_Mnnativeplantcommunities_CCNHA_2_0,
+        });
+        bounds_group.addLayer(layer_Mnnativeplantcommunities_CCNHA_2);
+        map.addLayer(layer_Mnnativeplantcommunities_CCNHA_2);
+        function pop_Soil_Types_lyr_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">AREA</th>\
+                        <td>' + (feature.properties['AREA'] !== null ? autolinker.link(feature.properties['AREA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PERIMETER</th>\
+                        <td>' + (feature.properties['PERIMETER'] !== null ? autolinker.link(feature.properties['PERIMETER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOILS2_</th>\
+                        <td>' + (feature.properties['SOILS2_'] !== null ? autolinker.link(feature.properties['SOILS2_'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOILS2_ID</th>\
+                        <td>' + (feature.properties['SOILS2_ID'] !== null ? autolinker.link(feature.properties['SOILS2_ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOILKEY</th>\
+                        <td>' + (feature.properties['SOILKEY'] !== null ? autolinker.link(feature.properties['SOILKEY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TEXTURE</th>\
+                        <td>' + (feature.properties['TEXTURE'] !== null ? autolinker.link(feature.properties['TEXTURE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ROUGH</th>\
+                        <td>' + (feature.properties['ROUGH'] !== null ? autolinker.link(feature.properties['ROUGH'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DRAIN</th>\
+                        <td>' + (feature.properties['DRAIN'] !== null ? autolinker.link(feature.properties['DRAIN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLASS</th>\
+                        <td>' + (feature.properties['CLASS'] !== null ? autolinker.link(feature.properties['CLASS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MAJOR1</th>\
+                        <td>' + (feature.properties['MAJOR1'] !== null ? autolinker.link(feature.properties['MAJOR1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MINOR1</th>\
+                        <td>' + (feature.properties['MINOR1'] !== null ? autolinker.link(feature.properties['MINOR1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SOIL_TYPES</th>\
+                        <td>' + (feature.properties['SOIL_TYPES'] !== null ? autolinker.link(feature.properties['SOIL_TYPES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Soil_Types_lyr_3_0() {
+            return {
+                pane: 'pane_Soil_Types_lyr_3',
+                opacity: 0.75,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.75,
+                fillColor: 'rgba(141,90,153,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Soil_Types_lyr_3');
+        map.getPane('pane_Soil_Types_lyr_3').style.zIndex = 403;
+        map.getPane('pane_Soil_Types_lyr_3').style['mix-blend-mode'] = 'normal';
+        var layer_Soil_Types_lyr_3 = new L.geoJson(json_Soil_Types_lyr_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Soil_Types_lyr_3',
+            layerName: 'layer_Soil_Types_lyr_3',
+            pane: 'pane_Soil_Types_lyr_3',
+            onEachFeature: pop_Soil_Types_lyr_3,
+            style: style_Soil_Types_lyr_3_0,
+        });
+        bounds_group.addLayer(layer_Soil_Types_lyr_3);
+        map.addLayer(layer_Soil_Types_lyr_3);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/Soil_Types_lyr_3.png" />  Soil Types': layer_Soil_Types_lyr_3,'<img src="legend/Mnnativeplantcommunities_CCNHA_2.png" />  Native Plant Communities': layer_Mnnativeplantcommunities_CCNHA_2,'<img src="legend/Lulc_CedarCreek_boundary_1.png" />  Cedar Creek boundary': layer_Lulc_CedarCreek_boundary_1,'<img src="legend/nwi_minusU_0.png" />  Hydrology': layer_nwi_minusU_0,}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
